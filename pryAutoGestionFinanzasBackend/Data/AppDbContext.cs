@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using pryAutoGestionFinanzasBackend.Models;
 
-namespace pryAutogestionFinanzas.Backend.Data
+namespace pryAutoGestionFinanzasBackend.Data
 {
     public class AppDbContext : DbContext
     {
@@ -9,7 +9,6 @@ namespace pryAutogestionFinanzas.Backend.Data
         {
         }
 
-        // Estas 3 líneas son las "tablas"
         public DbSet<Movimiento> Movimientos { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<MedioPago> MediosPago { get; set; }

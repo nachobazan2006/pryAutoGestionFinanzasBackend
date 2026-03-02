@@ -1,8 +1,8 @@
 ﻿namespace pryAutoGestionFinanzasBackend.DTOs
 {
-    public class CreateMovimientoRequest
+    public class UpdateMovimientoRequest
     {
-        public string Tipo { get; set; } = "";      // "Ingreso" o "Egreso"
+        public string Tipo { get; set; } = "";     // "Ingreso" / "Egreso"
         public int CategoriaId { get; set; }
         public int MedioPagoId { get; set; }
         public decimal Monto { get; set; }

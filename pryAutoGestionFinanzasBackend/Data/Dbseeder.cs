@@ -1,5 +1,4 @@
-﻿using pryAutogestionFinanzas.Backend.Data;
-using pryAutoGestionFinanzasBackend.Models;
+﻿using pryAutoGestionFinanzasBackend.Models;
 
 namespace pryAutoGestionFinanzasBackend.Data
 {
@@ -7,7 +6,7 @@ namespace pryAutoGestionFinanzasBackend.Data
     {
         public static void Seed(AppDbContext db)
         {
-            // Medios de pago
+            // 1) Medios de pago
             if (!db.MediosPago.Any())
             {
                 db.MediosPago.AddRange(
@@ -18,16 +17,21 @@ namespace pryAutoGestionFinanzasBackend.Data
                 );
             }
 
-            // Categorías (mezcla de egresos e ingresos, mínimo viable)
+            // 2) Categorías (mínimo viable para arrancar)
             if (!db.Categorias.Any())
             {
                 db.Categorias.AddRange(
+                    // EGRESO
                     new Categoria { Nombre = "Comida", Tipo = "Egreso" },
                     new Categoria { Nombre = "Transporte", Tipo = "Egreso" },
                     new Categoria { Nombre = "Servicios", Tipo = "Egreso" },
                     new Categoria { Nombre = "Salud", Tipo = "Egreso" },
+                    new Categoria { Nombre = "Ocio", Tipo = "Egreso" },
+
+                    // INGRESO
                     new Categoria { Nombre = "Sueldo", Tipo = "Ingreso" },
-                    new Categoria { Nombre = "Freelance", Tipo = "Ingreso" }
+                    new Categoria { Nombre = "Freelance", Tipo = "Ingreso" },
+                    new Categoria { Nombre = "Ventas", Tipo = "Ingreso" }
                 );
             }
 
