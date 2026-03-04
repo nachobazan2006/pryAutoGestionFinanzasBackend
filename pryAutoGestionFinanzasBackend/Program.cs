@@ -14,6 +14,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS (para HTML local / file://)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+    );
+});
+
 // DB: EF Core + SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -23,6 +33,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<EstadisticasService>();
 
 var app = builder.Build();
+
+// --------------------
+// DB init + seed
+// --------------------
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+    DbSeeder.Seed(db);
+}
 
 // --------------------
 // Middleware
@@ -35,18 +55,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("DevCors"); // importante: antes de MapControllers
+
 app.UseAuthorization();
 
 app.MapControllers();
-
-// --------------------
-// DB init + seed
-// --------------------
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
-    DbSeeder.Seed(db);
-}
 
 app.Run();
