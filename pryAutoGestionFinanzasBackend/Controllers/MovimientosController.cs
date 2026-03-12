@@ -60,7 +60,8 @@ namespace pryAutoGestionFinanzasBackend.Controllers
                 MedioPagoId = m.MedioPagoId,
                 Monto = m.Monto,
                 Fecha = m.Fecha,
-                Descripcion = m.Descripcion
+                Descripcion = m.Descripcion,
+                CreadoPor = m.CreadoPor
             };
         }
 
@@ -70,7 +71,6 @@ namespace pryAutoGestionFinanzasBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateMovimientoRequest request)
         {
-            // Validación
             var validationResult = await ValidarMovimientoAsync(
                 request.Tipo,
                 request.CategoriaId,
@@ -88,7 +88,8 @@ namespace pryAutoGestionFinanzasBackend.Controllers
                 MedioPagoId = request.MedioPagoId,
                 Monto = request.Monto,
                 Fecha = request.Fecha,
-                Descripcion = request.Descripcion
+                Descripcion = request.Descripcion,
+                CreadoPor = request.CreadoPor
             };
 
             _db.Movimientos.Add(movimiento);
@@ -96,7 +97,6 @@ namespace pryAutoGestionFinanzasBackend.Controllers
 
             var response = ToResponse(movimiento);
 
-            // API “pro”: devuelve 201 + header Location apuntando al GET by id
             return CreatedAtAction(nameof(GetById), new { id = movimiento.Id }, response);
         }
 
@@ -112,7 +112,6 @@ namespace pryAutoGestionFinanzasBackend.Controllers
             [FromQuery] int? medioPagoId = null
         )
         {
-            // Validación del filtro tipo si viene
             if (!string.IsNullOrWhiteSpace(tipo) && !IsTipoValido(tipo))
                 return ApiBadRequest("Tipo inválido", "Tipo debe ser 'Ingreso' o 'Egreso'.");
 
@@ -136,7 +135,6 @@ namespace pryAutoGestionFinanzasBackend.Controllers
             if (medioPagoId.HasValue)
                 query = query.Where(m => m.MedioPagoId == medioPagoId.Value);
 
-            // Devolvemos un shape “amigable” para UI (con nombres)
             var lista = await query
                 .OrderByDescending(m => m.Fecha)
                 .Select(m => new
@@ -146,6 +144,7 @@ namespace pryAutoGestionFinanzasBackend.Controllers
                     monto = m.Monto,
                     fecha = m.Fecha,
                     descripcion = m.Descripcion,
+                    creadoPor = m.CreadoPor,
                     categoriaId = m.CategoriaId,
                     categoria = m.Categoria != null ? m.Categoria.Nombre : null,
                     medioPagoId = m.MedioPagoId,
@@ -172,6 +171,7 @@ namespace pryAutoGestionFinanzasBackend.Controllers
                     monto = m.Monto,
                     fecha = m.Fecha,
                     descripcion = m.Descripcion,
+                    creadoPor = m.CreadoPor,
                     categoriaId = m.CategoriaId,
                     medioPagoId = m.MedioPagoId
                 })
@@ -209,6 +209,7 @@ namespace pryAutoGestionFinanzasBackend.Controllers
             mov.Monto = req.Monto;
             mov.Fecha = req.Fecha;
             mov.Descripcion = req.Descripcion;
+            mov.CreadoPor = req.CreadoPor;
 
             await _db.SaveChangesAsync();
 

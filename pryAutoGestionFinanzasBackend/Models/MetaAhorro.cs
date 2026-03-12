@@ -18,6 +18,7 @@ namespace TuProyectoBackend.Models
         public DateTime? FechaObjetivo { get; set; }
 
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public string CreadoPor { get; set; } = "";
 
         // Relación
         public ICollection<AporteAhorro> Aportes { get; set; } = new List<AporteAhorro>();

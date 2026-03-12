@@ -18,35 +18,66 @@ namespace pryAutoGestionFinanzasBackend.Controllers
 
         // GET: api/MetasAhorro
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MetaAhorro>>> GetMetas()
+        public async Task<IActionResult> GetMetas()
         {
-            return await _context.MetasAhorro
-                .Include(m => m.Aportes)
+            var lista = await _context.MetasAhorro
+                .OrderByDescending(m => m.Id)
+                .Select(m => new
+                {
+                    id = m.Id,
+                    nombre = m.Nombre,
+                    objetivo = m.Objetivo,
+                    moneda = m.Moneda,
+                    lugarGuardado = m.LugarGuardado,
+                    fechaObjetivo = m.FechaObjetivo,
+                    creadoPor = m.CreadoPor
+                })
                 .ToListAsync();
+
+            return Ok(lista);
         }
 
         // GET: api/MetasAhorro/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MetaAhorro>> GetMeta(int id)
+        public async Task<IActionResult> GetMeta(int id)
         {
             var meta = await _context.MetasAhorro
-                .Include(m => m.Aportes)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Where(m => m.Id == id)
+                .Select(m => new
+                {
+                    id = m.Id,
+                    nombre = m.Nombre,
+                    objetivo = m.Objetivo,
+                    moneda = m.Moneda,
+                    lugarGuardado = m.LugarGuardado,
+                    fechaObjetivo = m.FechaObjetivo,
+                    creadoPor = m.CreadoPor
+                })
+                .FirstOrDefaultAsync();
 
             if (meta == null)
                 return NotFound();
 
-            return meta;
+            return Ok(meta);
         }
 
         // POST: api/MetasAhorro
         [HttpPost]
-        public async Task<ActionResult<MetaAhorro>> CreateMeta(MetaAhorro meta)
+        public async Task<IActionResult> CreateMeta(MetaAhorro meta)
         {
             _context.MetasAhorro.Add(meta);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMeta), new { id = meta.Id }, meta);
+            return CreatedAtAction(nameof(GetMeta), new { id = meta.Id }, new
+            {
+                id = meta.Id,
+                nombre = meta.Nombre,
+                objetivo = meta.Objetivo,
+                moneda = meta.Moneda,
+                lugarGuardado = meta.LugarGuardado,
+                fechaObjetivo = meta.FechaObjetivo,
+                creadoPor = meta.CreadoPor
+            });
         }
 
         // PUT: api/MetasAhorro/5
@@ -56,7 +87,17 @@ namespace pryAutoGestionFinanzasBackend.Controllers
             if (id != meta.Id)
                 return BadRequest();
 
-            _context.Entry(meta).State = EntityState.Modified;
+            var existente = await _context.MetasAhorro.FindAsync(id);
+            if (existente == null)
+                return NotFound();
+
+            existente.Nombre = meta.Nombre;
+            existente.Objetivo = meta.Objetivo;
+            existente.Moneda = meta.Moneda;
+            existente.LugarGuardado = meta.LugarGuardado;
+            existente.FechaObjetivo = meta.FechaObjetivo;
+            existente.CreadoPor = meta.CreadoPor;
+
             await _context.SaveChangesAsync();
 
             return NoContent();

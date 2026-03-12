@@ -18,6 +18,10 @@ namespace pryAutoGestionFinanzasBackend.Models
         public MedioPago? MedioPago { get; set; }        // navegación
 
         public string? Descripcion { get; set; }         // opcional
+
+        // 👇 NUEVO CAMPO (usuario que creó el movimiento)
+        public string CreadoPor { get; set; } = "";
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

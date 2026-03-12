@@ -1,21 +1,12 @@
-﻿using System;
-
-namespace TuProyectoBackend.Models
+﻿namespace pryAutoGestionFinanzasBackend.Dtos
 {
-    public class AporteAhorro
+    public class AporteAhorroDto
     {
         public int Id { get; set; }
-
         public int MetaAhorroId { get; set; }
-
-        public decimal Monto { get; set; }
-
         public DateTime Fecha { get; set; }
-
+        public decimal Monto { get; set; }
         public string? Nota { get; set; }
-
-        // Relación
-        public MetaAhorro MetaAhorro { get; set; } = null!;
         public string CreadoPor { get; set; } = "";
     }
 }
